@@ -1,0 +1,82 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { siteConfig } from '../../data/site';
+import { formatDate, getReadingTime, sortBlogEntries } from '../../lib/blog';
+import Layout from '../../layouts/Layout.astro';
+
+interface Props {
+	post: CollectionEntry<'blog'>;
+	newerPost?: CollectionEntry<'blog'>;
+	olderPost?: CollectionEntry<'blog'>;
+}
+
+export async function getStaticPaths() {
+	const posts = sortBlogEntries(await getCollection('blog', ({ data }) => !data.draft));
+
+	return posts.map((post, index) => ({
+		params: { slug: post.slug },
+		props: {
+			post,
+			newerPost: posts[index - 1],
+			olderPost: posts[index + 1],
+		},
+	}));
+}
+
+const { post, newerPost, olderPost } = Astro.props as Props;
+const { Content } = await post.render();
+const publishedLabel = formatDate(post.data.pubDate);
+const updatedLabel = post.data.updatedDate ? formatDate(post.data.updatedDate) : undefined;
+const readingTime = getReadingTime(post.body);
+---
+
+<Layout
+	title={post.data.title}
+	description={post.data.description}
+	pathname={`/blog/${post.slug}/`}
+	type="article"
+	image={post.data.heroImage?.src ?? siteConfig.ogImage}
+	publishedTime={post.data.pubDate.toISOString()}
+	updatedTime={post.data.updatedDate?.toISOString()}
+>
+	<article class="article-shell">
+		<header class="article-header paper-panel reveal">
+			<p class="eyebrow">Blog Entry</p>
+			<h1>{post.data.title}</h1>
+			<p class="article-summary">{post.data.description}</p>
+			<div class="article-meta">
+				<span>{publishedLabel}</span>
+				<span>{readingTime}</span>
+				{updatedLabel && <span>Updated {updatedLabel}</span>}
+			</div>
+			{post.data.tags.length > 0 && (
+				<ul class="tag-list" aria-label="Post tags">
+					{post.data.tags.map((tag) => <li>{tag}</li>)}
+				</ul>
+			)}
+		</header>
+
+		<div class="paper-panel article-prose reveal">
+			<Content />
+		</div>
+	</article>
+
+	<nav class="article-nav" aria-label="Post navigation">
+		{newerPost ? (
+			<a class="paper-panel article-nav__link reveal" href={`/blog/${newerPost.slug}/`}>
+				<span class="eyebrow">Newer Post</span>
+				<strong>{newerPost.data.title}</strong>
+			</a>
+		) : (
+			<div></div>
+		)}
+		{olderPost ? (
+			<a class="paper-panel article-nav__link reveal" href={`/blog/${olderPost.slug}/`}>
+				<span class="eyebrow">Older Post</span>
+				<strong>{olderPost.data.title}</strong>
+			</a>
+		) : (
+			<div></div>
+		)}
+	</nav>
+</Layout>

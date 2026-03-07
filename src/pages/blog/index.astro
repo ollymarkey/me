@@ -1,0 +1,31 @@
+﻿---
+import { getCollection } from 'astro:content';
+import BlogCard from '../../components/BlogCard.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import Layout from '../../layouts/Layout.astro';
+import { sortBlogEntries } from '../../lib/blog';
+
+const posts = sortBlogEntries(await getCollection('blog', ({ data }) => !data.draft));
+---
+
+<Layout title="Blog" description="Writing on Astro, content systems, front-end architecture, and interface design.">
+	<section class="section-stack">
+		<SectionHeading
+			eyebrow="Blog"
+			title="Dispatches from the notebook."
+			intro="A running archive of build notes, front-end decisions, and design-system thinking."
+		/>
+		{
+			posts.length > 0 ? (
+				<div class="blog-grid">
+					{posts.map((post) => <BlogCard post={post} />)}
+				</div>
+			) : (
+				<article class="paper-panel empty-state">
+					<h3>No published posts yet.</h3>
+					<p>Once a Markdown file is added to <code>src/content/blog</code>, it will appear here automatically.</p>
+				</article>
+			)
+		}
+	</section>
+</Layout>

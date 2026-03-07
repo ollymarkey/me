@@ -1,0 +1,34 @@
+﻿---
+import type { Project } from '../data/site';
+
+interface Props {
+	project: Project;
+	featured?: boolean;
+}
+
+const { project, featured = false } = Astro.props;
+---
+
+<article class:list={['paper-panel', 'project-card', 'reveal', { featured }]}>
+	<div class="project-meta">
+		<p class="eyebrow">{project.year}</p>
+		<span class="project-status">{project.status}</span>
+	</div>
+	<h3>{project.title}</h3>
+	<p>{project.summary}</p>
+	<p class="project-outcome">{project.outcome}</p>
+	<ul class="tag-list" aria-label={`${project.title} technology stack`}>
+		{project.stack.map((item) => <li>{item}</li>)}
+	</ul>
+	{project.links.length > 0 && (
+		<div class="project-links">
+			{
+				project.links.map((link) => (
+					<a href={link.href} target={link.external ? '_blank' : undefined} rel={link.external ? 'noreferrer' : undefined}>
+						{link.label}
+					</a>
+				))
+			}
+		</div>
+	)}
+</article>

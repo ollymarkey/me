@@ -1,0 +1,26 @@
+﻿---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate, getReadingTime } from '../lib/blog';
+
+interface Props {
+	post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+---
+
+<article class="paper-panel blog-card reveal">
+	<p class="eyebrow">{formatDate(post.data.pubDate)}</p>
+	<h3>
+		<a href={`/blog/${post.slug}/`}>{post.data.title}</a>
+	</h3>
+	<p>{post.data.description}</p>
+	<div class="blog-meta">
+		<span>{getReadingTime(post.body)}</span>
+		{post.data.tags.length > 0 && (
+			<ul class="tag-list" aria-label="Post tags">
+				{post.data.tags.map((tag) => <li>{tag}</li>)}
+			</ul>
+		)}
+	</div>
+</article>

@@ -1,0 +1,24 @@
+﻿---
+import { siteConfig } from '../data/site';
+
+const navigation = [
+	{ href: '/#projects', label: 'Work' },
+	{ href: '/#about', label: 'About' },
+	{ href: '/blog', label: 'Blog' },
+	{ href: '/#contact', label: 'Contact' },
+];
+---
+
+<header class="site-header">
+	<div class="site-header__inner">
+		<a class="brand" href="/">
+			<span class="brand-mark">OM</span>
+			<span>{siteConfig.name}</span>
+		</a>
+		<nav aria-label="Primary navigation">
+			<ul class="nav-list">
+				{navigation.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+			</ul>
+		</nav>
+	</div>
+</header>
