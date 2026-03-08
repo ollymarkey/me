@@ -297,7 +297,16 @@ pre code {
 
 .hero-copy,
 .article-prose {
-	padding: clamp(1.5rem, 4vw, 2.2rem);
+	padding: clamp(2rem, 5vw, 3rem);
+}
+
+.hero-copy .lede {
+	margin-top: 1.35rem;
+	max-width: 34rem;
+}
+
+.hero-copy .hero-actions {
+	margin-top: 1.5rem;
 }
 
 .hero-note {
@@ -325,6 +334,12 @@ pre code {
 	gap: 1rem;
 }
 
+.detail-list li {
+	display: grid;
+	grid-template-columns: 4.75rem minmax(0, 1fr);
+	align-items: start;
+}
+
 .detail-list strong,
 .article-meta span,
 .project-status {
@@ -332,6 +347,10 @@ pre code {
 	font-size: 0.82rem;
 	letter-spacing: 0.06em;
 	text-transform: uppercase;
+}
+
+.detail-list span {
+	text-align: right;
 }
 
 .hero-actions,
@@ -603,8 +622,15 @@ pre code {
 		max-width: 12ch;
 	}
 
-	.contact-list li a,
-	.detail-list li {
+	.contact-list li a {
 		flex-direction: column;
+	}
+
+	.detail-list li {
+		grid-template-columns: 1fr;
+	}
+
+	.detail-list span {
+		text-align: left;
 	}
 }

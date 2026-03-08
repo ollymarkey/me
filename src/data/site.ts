@@ -1,4 +1,6 @@
-﻿export interface LinkItem {
+import { APP_CONSTANTS } from '../CONSTANTS';
+
+export interface LinkItem {
 	label: string;
 	href: string;
 	note: string;
@@ -13,8 +15,8 @@ export const siteConfig = {
 	siteUrl: undefined as string | undefined,
 	ogImage: '/og-cover.svg',
 	location: 'Melbourne, Australia',
-	availability: 'Open to work',
-	email: 'hello@ollymarkey.dev',
+	availability: 'Building enterprise SaaS for Lexin Solutions',
+	email: APP_CONSTANTS.email.note,
 	hero: {
 		headline: 'AI-native fullstack developer focused on clarity and craft.',
 		summary: 'Building products across frontend, backend, and AI-assisted workflows without losing maintainability.',
@@ -39,20 +41,12 @@ export const siteConfig = {
 
 export const socialLinks: LinkItem[] = [
 	{
-		label: 'Email',
-		href: `mailto:${siteConfig.email}`,
-		note: siteConfig.email,
+		...APP_CONSTANTS.email,
 	},
 	{
-		label: 'GitHub',
-		href: 'https://github.com/ollymarkey',
-		note: '@ollymarkey',
-		external: true,
+		...APP_CONSTANTS.github,
 	},
 	{
-		label: 'LinkedIn',
-		href: 'https://www.linkedin.com',
-		note: 'Professional profile',
-		external: true,
+		...APP_CONSTANTS.linkedin,
 	},
 ];
