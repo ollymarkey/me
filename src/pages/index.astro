@@ -9,7 +9,7 @@ import Layout from '../layouts/Layout.astro';
 const featuredPosts = sortBlogEntries(await getCollection('blog', ({ data }) => !data.draft)).slice(0, 2);
 ---
 
-<Layout title="Portfolio" description={siteConfig.description}>
+<Layout description={siteConfig.description}>
 	<section class="hero panel-grid">
 		<div class="paper-panel hero-copy reveal">
 			<h1>{siteConfig.hero.headline}</h1>

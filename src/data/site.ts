@@ -7,7 +7,7 @@
 
 export const siteConfig = {
 	name: 'Olly Markey',
-	defaultTitle: 'Olly Markey | Portfolio and Journal',
+	defaultTitle: 'Olly Markey',
 	description:
 		'An AI-native fullstack developer portfolio built like a notebook: selected work, writing, and practical systems thinking across product, platform, and interface.',
 	siteUrl: undefined as string | undefined,
