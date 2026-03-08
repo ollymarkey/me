@@ -161,16 +161,14 @@ pre code {
 }
 
 .brand-mark {
-	display: inline-grid;
-	place-items: center;
+	display: block;
 	width: 2.5rem;
 	height: 2.5rem;
-	border-radius: 50%;
+	border-radius: 0.8rem;
 	border: 1px solid var(--line-strong);
-	background: rgba(255, 255, 255, 0.75);
-	font-family: var(--font-mono);
-	font-size: 0.8rem;
-	letter-spacing: 0.2em;
+	background: transparent;
+	object-fit: cover;
+	box-shadow: 0 8px 18px rgba(17, 17, 17, 0.08);
 }
 
 .nav-list,
