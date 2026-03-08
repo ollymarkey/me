@@ -1,9 +1,8 @@
 ﻿---
 import { getCollection } from 'astro:content';
 import BlogCard from '../components/BlogCard.astro';
-import ProjectCard from '../components/ProjectCard.astro';
 import SectionHeading from '../components/SectionHeading.astro';
-import { featuredProjects, siteConfig, skillGroups, socialLinks } from '../data/site';
+import { siteConfig, socialLinks } from '../data/site';
 import { sortBlogEntries } from '../lib/blog';
 import Layout from '../layouts/Layout.astro';
 
@@ -13,7 +12,6 @@ const featuredPosts = sortBlogEntries(await getCollection('blog', ({ data }) => 
 <Layout title="Portfolio" description={siteConfig.description}>
 	<section class="hero panel-grid">
 		<div class="paper-panel hero-copy reveal">
-			<p class="eyebrow">{siteConfig.hero.eyebrow}</p>
 			<h1>{siteConfig.hero.headline}</h1>
 			<p class="lede">{siteConfig.hero.summary}</p>
 			<div class="hero-actions">
@@ -26,7 +24,6 @@ const featuredPosts = sortBlogEntries(await getCollection('blog', ({ data }) => 
 			</div>
 		</div>
 		<aside class="paper-panel hero-note reveal">
-			<p class="eyebrow">Field Notes</p>
 			<ul class="detail-list">
 				<li>
 					<strong>Focus</strong>
@@ -41,64 +38,17 @@ const featuredPosts = sortBlogEntries(await getCollection('blog', ({ data }) => 
 					<span>{siteConfig.availability}</span>
 				</li>
 			</ul>
+			<ul class="check-list" style="margin-top: 1rem;">
+				{siteConfig.principles.map((principle) => <li>{principle}</li>)}
+			</ul>
 		</aside>
-	</section>
-
-	<section id="projects" class="section-stack">
-		<SectionHeading
-			eyebrow="Selected Work"
-			title="Case studies shaped by structure, clarity, and shipping discipline."
-			intro="Each project is framed as a product system: what needed to change, how the interface evolved, and what the team could do faster afterward."
-		/>
-		<div class="project-grid">
-			{featuredProjects.map((project, index) => <ProjectCard project={project} featured={index === 0} />)}
-		</div>
-	</section>
-
-	<section id="about" class="section-stack">
-		<SectionHeading
-			eyebrow="About"
-			title="I like interfaces that feel intentional on first load and maintainable six months later."
-			intro="The site is Astro-first by design: clean content boundaries now, room for islands and mixed-framework experiments when interaction is worth the cost."
-		/>
-		<div class="about-grid">
-			<div class="paper-panel reveal">
-				{siteConfig.about.map((paragraph) => <p>{paragraph}</p>)}
-			</div>
-			<div class="paper-panel reveal">
-				<p class="eyebrow">Working Preferences</p>
-				<ul class="check-list">
-					{siteConfig.principles.map((principle) => <li>{principle}</li>)}
-				</ul>
-			</div>
-		</div>
-	</section>
-
-	<section id="skills" class="section-stack">
-		<SectionHeading
-			eyebrow="Capabilities"
-			title="A practical toolkit for content-heavy, interface-rich web work."
-			intro="Grouped by the kind of decisions they help support rather than by logo count."
-		/>
-		<div class="skills-grid">
-			{
-				skillGroups.map((group) => (
-					<article class="paper-panel reveal">
-						<p class="eyebrow">{group.title}</p>
-						<ul class="tag-list" aria-label={group.title}>
-							{group.items.map((item) => <li>{item}</li>)}
-						</ul>
-					</article>
-				))
-			}
-		</div>
 	</section>
 
 	<section id="blog-preview" class="section-stack">
 		<SectionHeading
 			eyebrow="Journal"
-			title="Writing about the systems behind the interface."
-			intro="Notes on Astro workflows, content architecture, and the small design decisions that make a site feel finished."
+			title="Writing about the systems behind the product."
+			intro="Notes on Astro workflows, AI-native tooling, fullstack architecture, and the small design decisions that make software feel finished."
 		/>
 		<div class="blog-grid">
 			{
@@ -120,8 +70,8 @@ const featuredPosts = sortBlogEntries(await getCollection('blog', ({ data }) => 
 	<section id="contact" class="section-stack">
 		<SectionHeading
 			eyebrow="Contact"
-			title="Open to thoughtful product, design-system, and content-platform work."
-			intro="If you have a project that needs a clearer front end, a sharper content structure, or a cleaner handoff between design and engineering, send a note."
+			title="Open to thoughtful product, platform, and AI-enabled build work."
+			intro="If you need stronger fullstack execution, sharper AI workflows, or a cleaner path from idea to shipped product, send a note."
 		/>
 		<div class="contact-grid">
 			<div class="paper-panel reveal">

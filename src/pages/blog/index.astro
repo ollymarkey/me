@@ -8,12 +8,12 @@ import { sortBlogEntries } from '../../lib/blog';
 const posts = sortBlogEntries(await getCollection('blog', ({ data }) => !data.draft));
 ---
 
-<Layout title="Blog" description="Writing on Astro, content systems, front-end architecture, and interface design.">
+<Layout title="Blog" description="Writing on Astro, AI-native workflows, fullstack architecture, and interface design.">
 	<section class="section-stack">
 		<SectionHeading
 			eyebrow="Blog"
 			title="Dispatches from the notebook."
-			intro="A running archive of build notes, front-end decisions, and design-system thinking."
+			intro="A running archive of build notes, fullstack decisions, and AI-native product thinking."
 		/>
 		{
 			posts.length > 0 ? (
