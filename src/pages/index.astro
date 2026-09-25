@@ -1,100 +1,43 @@
-﻿---
-import { getCollection } from 'astro:content';
-import BlogCard from '../components/BlogCard.astro';
-import SectionHeading from '../components/SectionHeading.astro';
-import { siteConfig, socialLinks } from '../data/site';
-import { sortBlogEntries } from '../lib/blog';
-import Layout from '../layouts/Layout.astro';
+---
+import Workspace from '../components/workspace/Workspace';
+import { siteConfig } from '../data/site';
+import '../styles/workspace.css';
+import geistRegular from '@fontsource/geist/files/geist-latin-400-normal.woff2?url';
 
-const featuredPosts = sortBlogEntries(await getCollection('blog', ({ data }) => !data.draft)).slice(0, 2);
+const description = 'Olly Markey’s personal workspace. Explore my background, fullstack skills, AI workflows, and writing through a guided conversation.';
+const site = siteConfig.siteUrl ?? Astro.site?.toString();
 ---
 
-<Layout description={siteConfig.description}>
-	<section class="hero panel-grid">
-		<div class="paper-panel hero-copy reveal">
-			<h1>{siteConfig.hero.headline}</h1>
-			<p class="lede">{siteConfig.hero.summary}</p>
-			<div class="hero-actions">
-				<a class="button button-primary" href={siteConfig.hero.primaryCta.href}>
-					{siteConfig.hero.primaryCta.label}
-				</a>
-				<a class="button button-secondary" href={siteConfig.hero.secondaryCta.href}>
-					{siteConfig.hero.secondaryCta.label}
-				</a>
-			</div>
-		</div>
-		<aside class="paper-panel hero-note reveal">
-			<ul class="detail-list">
-				<li>
-					<strong>Focus</strong>
-					<span>{siteConfig.hero.focus}</span>
-				</li>
-				<li>
-					<strong>Based</strong>
-					<span>{siteConfig.location}</span>
-				</li>
-				<li>
-					<strong>Status</strong>
-					<span>{siteConfig.availability}</span>
-				</li>
-			</ul>
-			<ul class="check-list" style="margin-top: 1rem;">
-				{siteConfig.principles.map((principle) => <li>{principle}</li>)}
-			</ul>
-		</aside>
-	</section>
-
-	<section id="blog-preview" class="section-stack">
-		<SectionHeading
-			eyebrow="Journal"
-			title="Writing about the systems behind the product."
-			intro="Notes on Astro workflows, AI-native tooling, fullstack architecture, and the small design decisions that make software feel finished."
-		/>
-		<div class="blog-grid">
-			{
-				featuredPosts.length > 0 ? (
-					featuredPosts.map((post) => <BlogCard post={post} />)
-				) : (
-					<article class="paper-panel empty-state">
-						<h3>The notebook is empty for now.</h3>
-						<p>Blog posts can be added in <code>src/content/blog</code> and will appear here automatically.</p>
-					</article>
-				)
-			}
-		</div>
-		<div class="section-cta">
-			<a class="button button-secondary" href="/blog">Browse the full blog</a>
-		</div>
-	</section>
-
-	<section id="contact" class="section-stack">
-		<SectionHeading
-			eyebrow="Contact"
-			title="Open to thoughtful product, platform, and AI-enabled build work."
-			intro="If you need stronger fullstack execution, sharper AI workflows, or a cleaner path from idea to shipped product, send a note."
-		/>
-		<div class="contact-grid">
-			<div class="paper-panel reveal">
-				<p class="contact-callout">{siteConfig.contactMessage}</p>
-				<a class="button button-primary" href={`mailto:${siteConfig.email}`}>
-					Email {siteConfig.email}
-				</a>
-			</div>
-			<div class="paper-panel reveal">
-				<p class="eyebrow">Links</p>
-				<ul class="contact-list">
-					{
-						socialLinks.map((link) => (
-							<li>
-								<a href={link.href} target={link.external ? '_blank' : undefined} rel={link.external ? 'noreferrer' : undefined}>
-									<span>{link.label}</span>
-									<span>{link.note}</span>
-								</a>
-							</li>
-						))
-					}
-				</ul>
-			</div>
-		</div>
-	</section>
-</Layout>
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="theme-color" content="#f0f3f1" />
+		<link rel="preload" href={geistRegular} as="font" type="font/woff2" crossorigin="anonymous" />
+		<title>Olly Markey | Personal workspace</title>
+		<meta name="description" content={description} />
+		<meta property="og:title" content="Olly Markey | Personal workspace" />
+		<meta property="og:description" content={description} />
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content={siteConfig.name} />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content="Olly Markey | Personal workspace" />
+		<meta name="twitter:description" content={description} />
+		{site && <><link rel="canonical" href={new URL('/', site).toString()} /><meta property="og:url" content={new URL('/', site).toString()} /><meta property="og:image" content={new URL('/og-cover.svg', site).toString()} /><meta name="twitter:image" content={new URL('/og-cover.svg', site).toString()} /></>}
+		<link rel="icon" href="/favicon.ico" sizes="any" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+		<link rel="manifest" href="/site.webmanifest" />
+		<script is:inline>
+			try {
+				const saved = localStorage.getItem('olly-theme');
+				document.documentElement.dataset.theme = saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+			} catch { document.documentElement.dataset.theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+		</script>
+	</head>
+	<body>
+		<a class="skip-link" href="#main-content">Skip to conversation</a>
+		<noscript><div class="no-js">I’m Olly Markey, a fullstack developer based in Melbourne, building enterprise SaaS for Lexin Solutions. Enable JavaScript to explore the guided workspace, <a href="/blog">read my blog</a>, or <a href={`mailto:${siteConfig.email}`}>get in touch by email</a>.</div></noscript>
+		<Workspace client:load />
+	</body>
+</html>

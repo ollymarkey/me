@@ -9,6 +9,14 @@ export interface LinkItem {
 
 export const siteConfig = {
 	name: 'Olly Markey',
+	avatar: '/apple-touch-icon.png',
+	shortRole: 'Fullstack developer',
+	role: 'AI-native fullstack developer',
+	bio: 'Building across product, platform, and interface. With clarity and craft.',
+	currentWork: {
+		product: 'Enterprise SaaS',
+		company: 'Lexin Solutions',
+	},
 	defaultTitle: 'Olly Markey',
 	description:
 		'An AI-native fullstack developer portfolio built like a notebook: selected work, writing, and practical systems thinking across product, platform, and interface.',

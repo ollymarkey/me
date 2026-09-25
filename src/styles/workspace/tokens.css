@@ -1,0 +1,34 @@
+/* Change the palette here; components consume semantic tokens. */
+:root {
+	color-scheme: light;
+	--ws-bg: #fcfdfc;
+	--ws-sidebar: #f0f3f1;
+	--ws-subtle: #f6f8f6;
+	--ws-hover: #e7eeea;
+	--ws-text: #233830;
+	--ws-body: #45574e;
+	--ws-muted: #596b60;
+	--ws-border: #e1e7e2;
+	--ws-accent: #286952;
+	--ws-selected: #dfece4;
+	--ws-accent-soft: #eaf2ed;
+	--ws-shadow: 0 8px 30px #243d2e12;
+	--ws-overlay: #10251b66;
+}
+
+:root[data-theme='dark'] {
+	color-scheme: dark;
+	--ws-bg: #18201d;
+	--ws-sidebar: #141b18;
+	--ws-subtle: #1e2823;
+	--ws-hover: #293930;
+	--ws-text: #e4eee7;
+	--ws-body: #b9c9bf;
+	--ws-muted: #97ad9e;
+	--ws-border: #303e35;
+	--ws-accent: #96c9ad;
+	--ws-selected: #293f33;
+	--ws-accent-soft: #25362c;
+	--ws-shadow: 0 8px 30px #0b110e33;
+	--ws-overlay: #10251b66;
+}
