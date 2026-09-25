@@ -38,11 +38,12 @@ src/
   components/            Shared blog components and interactive workspace
   content/blog/          Markdown blog posts
   data/site.ts           Profile and blog metadata configuration
-  data/channels.ts       Channel introductions and curated prompt definitions
+  data/channels.ts       Browser-safe channel types and lookup
+  data/workspace-content.server.ts  All channel copy, questions, and responses
   hooks/                 Chat, navigation, storage, scrolling, and theme behavior
   layouts/Layout.astro   Shared document layout and page metadata
   lib/blog.ts            Blog utilities
-  lib/chat/              Prepared answers, streaming parser, state, and types
+  lib/chat/              Content projection, streaming parser, state, and types
   pages/
     index.astro          Workspace homepage
     api/chat.ts          On-demand streaming endpoint
@@ -58,9 +59,9 @@ astro.config.mjs         Astro configuration
 
 ## Updating content
 
-- Edit `src/data/channels.ts` for channel introductions, pinned notes, and prompt labels/questions.
-- Edit `src/lib/chat/answers.server.ts` for prepared responses and their related links. This module stays on the server; full answers are not included in the client bundle.
-- Each prompt ID needs a corresponding answer under its channel ID. Missing answers fail validation during the build/server startup.
+- Edit `src/data/workspace-content.server.ts` for all channel copy: introductions, opening messages, pinned notes, questions, responses, and response links. Each prompt contains its own `response` object.
+- The content stays server-only. `src/lib/chat/answers.server.ts` derives public channel metadata for React and the answer lookup for the endpoint; full answers are excluded from page props and the client bundle.
+- Keep channel keys and prompt IDs stable. Duplicate prompt IDs and empty answers fail validation during build/server startup. See `docs/channel-content-guide.md` for editing examples.
 - Edit `src/data/site.ts` for shared profile data and blog metadata. The workspace's profile panel lives in `src/components/workspace/ContextPanel.tsx`.
 - Edit `src/CONSTANTS.ts` for email, GitHub, and LinkedIn links.
 - Add Markdown files to `src/content/blog/` for new posts. The current `first-post.md` is placeholder content.

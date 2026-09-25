@@ -1,5 +1,6 @@
 ---
 import Workspace from '../components/workspace/Workspace';
+import { channels } from '../lib/chat/answers.server';
 import { siteConfig } from '../data/site';
 import '../styles/workspace.css';
 import geistRegular from '@fontsource/geist/files/geist-latin-400-normal.woff2?url';
@@ -13,7 +14,7 @@ const site = siteConfig.siteUrl ?? Astro.site?.toString();
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="theme-color" content="#f0f3f1" />
+		<meta name="theme-color" content="#f5f5f5" />
 		<link rel="preload" href={geistRegular} as="font" type="font/woff2" crossorigin="anonymous" />
 		<title>Olly Markey | Personal workspace</title>
 		<meta name="description" content={description} />
@@ -34,10 +35,23 @@ const site = siteConfig.siteUrl ?? Astro.site?.toString();
 				document.documentElement.dataset.theme = saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
 			} catch { document.documentElement.dataset.theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
 		</script>
+		<script>
+			// Keep browser chrome aligned with the palette, including manual overrides.
+			const root = document.documentElement;
+			function syncThemeColor() {
+				const color = getComputedStyle(root).getPropertyValue('--ws-sidebar').trim();
+				document.querySelector('meta[name="theme-color"]')?.setAttribute('content', color);
+			}
+			syncThemeColor();
+			new MutationObserver(syncThemeColor).observe(root, {
+				attributes: true,
+				attributeFilter: ['data-theme'],
+			});
+		</script>
 	</head>
 	<body>
 		<a class="skip-link" href="#main-content">Skip to conversation</a>
 		<noscript><div class="no-js">I’m Olly Markey, a fullstack developer based in Melbourne, building enterprise SaaS for Lexin Solutions. Enable JavaScript to explore the guided workspace, <a href="/blog">read my blog</a>, or <a href={`mailto:${siteConfig.email}`}>get in touch by email</a>.</div></noscript>
-		<Workspace client:load />
+		<Workspace channels={channels} client:load />
 	</body>
 </html>

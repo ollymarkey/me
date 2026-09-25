@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import type { Prompt } from '../../data/channels';
+import type { Channel, Prompt } from '../../data/channels';
 import { useChannelNavigation } from '../../hooks/useChannelNavigation';
 import { useConversationScroll } from '../../hooks/useConversationScroll';
 import { useTheme } from '../../hooks/useTheme';
@@ -12,9 +12,9 @@ import MobileChannelDrawer from './MobileChannelDrawer';
 import PromptPicker from './PromptPicker';
 import WorkspaceTopbar from './WorkspaceTopbar';
 
-export default function Workspace() {
+export default function Workspace({ channels }: { channels: Channel[] }) {
 	const [announcement, announce] = useState('');
-	const chat = useWorkspaceChat(announce);
+	const chat = useWorkspaceChat(channels, announce);
 	const { stop } = chat;
 	const { dark, toggleTheme } = useTheme();
 	const onChannelChange = useCallback(
@@ -24,7 +24,7 @@ export default function Workspace() {
 		},
 		[stop],
 	);
-	const { channel, navigate } = useChannelNavigation(onChannelChange);
+	const { channel, navigate } = useChannelNavigation(channels, onChannelChange);
 	const scroll = useConversationScroll(channel.id, chat.histories);
 	const history = chat.histories[channel.id] ?? [];
 	const running = history.some(
@@ -49,6 +49,7 @@ export default function Workspace() {
 	}
 
 	const sidebarProps = {
+		channels,
 		active: channel.id,
 		histories: chat.histories,
 		onNavigate: navigate,

@@ -8,6 +8,8 @@ const site = process.env.SITE_URL;
 
 export default defineConfig({
 	site,
+	// The floating toolbar overlaps the mobile drawer's theme control.
+	devToolbar: { enabled: false },
 	integrations: [react()],
 	adapter: node({ mode: 'standalone' }),
 	security: {

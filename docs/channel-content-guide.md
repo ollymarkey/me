@@ -2,7 +2,38 @@
 
 The initial copy is grounded in the existing site's profile and the workspace implementation. Technical explanations describe this site; they are not claims about past client projects. Review the first-person copy before publishing.
 
-Edit prompt labels and questions in `src/data/channels.ts`, and answers in `src/lib/chat/answers.server.ts`. Match prompt IDs to answer keys. Responses support paragraphs separated by blank lines and optional link attachments. Text is rendered safely without raw HTML.
+## Editing channel copy
+
+Edit **`src/data/workspace-content.server.ts`**. Its `channelContent` object is the single source for channel descriptions, pinned notes, opening messages, question buttons, and prepared responses. Each channel key contains its prompts, with each response directly beside its question:
+
+```ts
+welcome: {
+  // Channel name, group, topic, title, intro, pinned, and openingMessage above.
+  prompts: [
+    {
+      id: 'hello',
+      label: 'The quick introduction',
+      question: 'Give me the quick introduction.',
+      response: {
+        text: `Your first paragraph.
+
+Your second paragraph.`,
+        // Optional: links: [github, linkedin, email, blog],
+      },
+    },
+  ],
+},
+```
+
+- `label` is the question button; `question` is the visitor message posted after clicking it.
+- `response.text` is the streamed reply. Use blank lines between paragraphs; do not indent the text inside multiline strings. Text is rendered safely without raw HTML.
+- `openingMessage` is the initial message shown before any question is selected.
+- Shared response-link labels and descriptions are at the top of this same file. Contact destinations still come from `src/CONSTANTS.ts`.
+- Keep channel keys and prompt IDs stable when changing copy so saved conversations and channel links keep working.
+- To add a question, add one prompt object with its response. There is no separate answer map to maintain. Duplicate prompt IDs and empty responses fail validation at build/server startup.
+- After editing, rebuild/redeploy the site. Use **Reset** in an already-explored channel to fetch updated answers rather than viewing its saved history.
+
+`src/lib/chat/answers.server.ts` derives the server lookup and a public channel list. Astro passes only that public list to React; prepared answers are excluded from page props and browser JavaScript. Shared profile facts remain in `src/data/site.ts`.
 
 ## About me
 

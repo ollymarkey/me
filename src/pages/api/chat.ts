@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { answers } from '../../lib/chat/answers.server';
+import { answers, channels } from '../../lib/chat/answers.server';
 import { getChannel } from '../../data/channels';
 import type { StreamEvent } from '../../lib/chat/types';
 
@@ -30,7 +30,7 @@ export const POST: APIRoute = async ({ request }) => {
 	} catch { return new Response('Invalid request', { status: 400 }); }
 	const { channelId, promptId, requestId } = input;
 	if (typeof channelId !== 'string' || typeof promptId !== 'string' || typeof requestId !== 'string' || !/^[\w-]{1,80}$/.test(requestId)) return new Response('Invalid identifiers', { status: 400 });
-	const channel = getChannel(channelId);
+	const channel = getChannel(channels, channelId);
 	if (!channel?.prompts.some((prompt) => prompt.id === promptId)) return new Response('Unknown prompt', { status: 400 });
 	const answer = answers[channelId][promptId];
 	const encoder = new TextEncoder();
@@ -51,7 +51,7 @@ export const POST: APIRoute = async ({ request }) => {
 				stop(); controller.close(); return;
 			}
 			// Deliberate server-side pacing for prepared content, not simulated model inference.
-			await new Promise<void>((resolve) => { release = resolve; timer = setTimeout(resolve, 35); });
+			await new Promise<void>((resolve) => { release = resolve; timer = setTimeout(resolve, 55); });
 			if (stopped) { if (!cancelled) controller.close(); return; }
 			controller.enqueue(encode({ type: 'delta', requestId, text: answer.text.slice(position, position + 24) }));
 			position += 24;

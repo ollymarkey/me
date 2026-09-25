@@ -17,8 +17,8 @@ This is Olly Markey's personal website and blog. The homepage is a Slack-inspire
 - `src/pages/`: thin Astro route entry points and API endpoints.
 - `src/components/workspace/`: focused React UI components. `Workspace.tsx` composes components and connects their behavior.
 - `src/hooks/`: focused React/browser behavior such as chat requests, navigation, storage, scrolling, and theme preferences.
-- `src/lib/chat/`: framework-independent state transitions, stream parsing, and shared types. `answers.server.ts` is server-only content.
-- `src/data/`: public profile data, channel definitions, and prompt metadata. Shared profile facts belong in `site.ts`; contact destinations belong in `CONSTANTS.ts`.
+- `src/lib/chat/`: framework-independent state transitions, stream parsing, and shared types. `answers.server.ts` derives public channel metadata and the server-only answer lookup.
+- `src/data/`: profile data and channel types. All channel copy, questions, and responses live in `workspace-content.server.ts`; pass only projected public metadata into React. Shared profile facts belong in `site.ts`; contact destinations belong in `CONSTANTS.ts`.
 - `src/styles/workspace/`: workspace theme tokens and responsibility-based stylesheets. `src/styles/workspace.css` is the import entry point.
 - `src/styles/global.css`: existing blog styles.
 - `src/content/blog/`: Markdown posts. Preserve existing published URLs.

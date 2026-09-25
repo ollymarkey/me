@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-  <rect width="1200" height="630" fill="#f0f3f1"/>
-  <rect x="72" y="76" width="64" height="64" rx="12" fill="#286952"/>
-  <text x="104" y="121" font-family="Arial,sans-serif" font-size="42" text-anchor="middle" fill="#fcfdfc">#</text>
-  <text x="72" y="268" font-family="Arial,sans-serif" font-size="76" font-weight="600" fill="#233830">Olly Markey</text>
-  <text x="72" y="344" font-family="Arial,sans-serif" font-size="36" fill="#45574e">Fullstack developer. A workspace to explore.</text>
-  <text x="72" y="523" font-family="Arial,sans-serif" font-size="24" fill="#286952">Product / Platform / Interface</text>
+  <rect width="1200" height="630" fill="#f5f5f5"/>
+  <rect x="72" y="76" width="64" height="64" rx="12" fill="#242424"/>
+  <text x="104" y="121" font-family="Arial,sans-serif" font-size="42" text-anchor="middle" fill="#ffffff">#</text>
+  <text x="72" y="268" font-family="Arial,sans-serif" font-size="76" font-weight="600" fill="#171717">Olly Markey</text>
+  <text x="72" y="344" font-family="Arial,sans-serif" font-size="36" fill="#444444">Fullstack developer. A workspace to explore.</text>
+  <text x="72" y="523" font-family="Arial,sans-serif" font-size="24" fill="#242424">Product / Platform / Interface</text>
 </svg>

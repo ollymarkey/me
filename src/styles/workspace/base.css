@@ -2,7 +2,7 @@
 	font-family: 'Geist', sans-serif;
 	background: var(--ws-bg);
 	color: var(--ws-text);
-	/* Layers: jump control 2, mobile overlay 10, drawer 11, skip link 12. */
+	/* Layers: jump 2, drawer overlay 10, drawer 11, profile overlay 13, profile 14, skip 15. */
 }
 
 * {
@@ -58,7 +58,7 @@ svg {
 	border-radius: 6px;
 	color: var(--ws-bg);
 	background: var(--ws-text);
-	z-index: 12;
+	z-index: 15;
 }
 .skip-link:focus {
 	transform: translateY(0);

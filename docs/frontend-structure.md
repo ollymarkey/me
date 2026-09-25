@@ -37,14 +37,15 @@ Workspace
 
 Hooks live in `src/hooks/`. The chat hook composes the storage hook. Workspace coordinates navigation with chat cancellation and prompt selection with scrolling.
 
-Framework-independent helpers remain in `src/lib/chat/`: `reducer.ts`, `stream.ts`, and `types.ts`. Prepared answers remain server-only in `answers.server.ts`.
+Framework-independent helpers remain in `src/lib/chat/`: `reducer.ts`, `stream.ts`, and `types.ts`. `answers.server.ts` projects the central content into public channel metadata and a server-only answer lookup. Astro passes the public channels into Workspace; navigation, storage validation, and the sidebar consume that same list.
 
 ## Content
 
 - `src/data/site.ts`: shared profile identity, image, role, bio, and current-work details, plus blog configuration.
-- `src/data/channels.ts`: channel introductions, pinned notes, and prompt metadata.
+- `src/data/workspace-content.server.ts`: single editable object containing channel introductions, pinned notes, opening messages, questions, prepared answers, and response links.
+- `src/data/channels.ts`: browser-safe channel/prompt types and lookup helper.
 - `src/CONSTANTS.ts`: contact and social destinations.
-- `src/lib/chat/answers.server.ts`: server-side prepared response text and links.
+- `src/lib/chat/answers.server.ts`: derives public channel metadata and server-side answer lookup, validating nonempty responses and unique prompt IDs. Full responses never enter hydrated props.
 
 ## Styles
 

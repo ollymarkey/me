@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useReducer, useRef } from 'react';
-import type { Prompt } from '../data/channels';
+import type { Channel, Prompt } from '../data/channels';
 import { chatReducer } from '../lib/chat/reducer';
 import { consumeStream } from '../lib/chat/stream';
 import { useConversationStorage } from './useConversationStorage';
@@ -16,10 +16,10 @@ function responseError(error: unknown, timedOut: boolean, aborted: boolean) {
 	return error instanceof Error ? error.message : 'Couldn’t finish the response. Please try again.';
 }
 
-export function useWorkspaceChat(announce: (message: string) => void) {
+export function useWorkspaceChat(channels: Channel[], announce: (message: string) => void) {
 	const [histories, dispatch] = useReducer(chatReducer, {});
 	const active = useRef<ActiveRequest | null>(null);
-	const { ready, storageNotice } = useConversationStorage(histories, dispatch);
+	const { ready, storageNotice } = useConversationStorage(channels, histories, dispatch);
 
 	useEffect(() => () => active.current?.controller.abort(), []);
 
@@ -41,7 +41,10 @@ export function useWorkspaceChat(announce: (message: string) => void) {
 		if (active.current || !ready) return;
 		if (!retry && histories[channelId]?.some((item) => item.promptId === prompt.id)) return;
 
-		const requestId = crypto.randomUUID();
+		// getRandomValues also works on HTTP previews opened from another device.
+		const requestId = Array.from(crypto.getRandomValues(new Uint8Array(16)),
+			(byte) => byte.toString(16).padStart(2, '0'),
+		).join('');
 		const controller = new AbortController();
 		active.current = { controller, channelId, requestId };
 		dispatch({

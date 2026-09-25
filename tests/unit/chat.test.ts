@@ -5,6 +5,7 @@ import { consumeStream } from '../../src/lib/chat/stream';
 import type { Exchange, StreamEvent } from '../../src/lib/chat/types';
 import { POST } from '../../src/pages/api/chat';
 import type { APIContext } from 'astro';
+import { channels } from '../../src/lib/chat/answers.server';
 
 const exchange: Exchange = { id: 'old-request', promptId: 'streaming', question: 'How does this streaming interface work?', text: '', status: 'connecting', links: [] };
 const initial = { frontend: [exchange] };
@@ -21,11 +22,11 @@ describe('conversation recovery and isolation', () => {
 		expect(chatReducer(retried, { ...late, channelId: 'backend' }).frontend).toEqual(retried.frontend);
 	});
 	test('restoring turns active requests into retryable interruptions and filters unsafe links', () => {
-		const restored = restoreHistories(JSON.stringify({ frontend: [{ ...exchange, text: 'Partial', status: 'streaming', links: [{ label: 'bad', href: 'javascript:alert(1)' }, { label: 'bad', href: '/\\evil.com' }, { label: 'Blog', href: '/blog' }] }], bogus: [exchange] }));
+		const restored = restoreHistories(JSON.stringify({ frontend: [{ ...exchange, text: 'Partial', status: 'streaming', links: [{ label: 'bad', href: 'javascript:alert(1)' }, { label: 'bad', href: '/\\evil.com' }, { label: 'Blog', href: '/blog' }] }], bogus: [exchange] }), channels);
 		expect(restored.frontend[0].status).toBe('interrupted');
 		expect(restored.frontend[0].links).toEqual([{ label: 'Blog', href: '/blog' }]);
 		expect(restored.bogus).toBeUndefined();
-		expect(restoreHistories('not json')).toEqual({});
+		expect(restoreHistories('not json', channels)).toEqual({});
 	});
 });
 

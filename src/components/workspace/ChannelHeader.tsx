@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { HashIcon, PushPinIcon } from '@phosphor-icons/react';
 import type { Channel } from '../../data/channels';
 import Avatar from './Avatar';
+import ProfileDialog from './ProfileDialog';
 
 interface Props {
 	channel: Channel;
@@ -20,10 +21,12 @@ export default function ChannelHeader({ channel, navigation }: Props) {
 					</h1>
 					<p>{channel.topic}</p>
 				</div>
-				<div className="channel-members">
-					<Avatar small />
-					<span>Just you & me</span>
-				</div>
+				<ProfileDialog>
+					<button className="channel-members profile-trigger" aria-label="View Olly’s profile">
+						<Avatar small />
+						<span>Just you & me</span>
+					</button>
+				</ProfileDialog>
 			</header>
 			<div className="pinned-note">
 				<PushPinIcon size={15} />

@@ -1,4 +1,4 @@
-import { getChannel } from '../../data/channels';
+import { getChannel, type Channel } from '../../data/channels';
 import type { Exchange, Histories, StreamEvent } from './types';
 
 export type Action =
@@ -34,14 +34,14 @@ export function chatReducer(state: Histories, action: Action): Histories {
 
 export const STORAGE_KEY = 'olly-workspace:v1';
 
-export function restoreHistories(raw: string | null): Histories {
+export function restoreHistories(raw: string | null, channels: Channel[]): Histories {
 	if (!raw || raw.length > 250_000) return {};
 	try {
 		const parsed: unknown = JSON.parse(raw);
 		if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
 		const restored: Histories = {};
 		for (const [channelId, value] of Object.entries(parsed)) {
-			const channel = getChannel(channelId);
+			const channel = getChannel(channels, channelId);
 			if (!channel || !Array.isArray(value)) continue;
 			const seen = new Set<string>();
 			restored[channelId] = value.flatMap((item): Exchange[] => {

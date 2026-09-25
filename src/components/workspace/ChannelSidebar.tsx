@@ -6,14 +6,16 @@ import {
 	MoonIcon,
 	SunIcon,
 } from '@phosphor-icons/react';
-import { channels } from '../../data/channels';
+import type { Channel } from '../../data/channels';
 import { siteConfig } from '../../data/site';
 import type { Histories } from '../../lib/chat/types';
 import Avatar from './Avatar';
+import ProfileDialog from './ProfileDialog';
 
 const groups = ['Start here', 'What I do', 'Explore'] as const;
 
 export interface ChannelSidebarProps {
+	channels: Channel[];
 	active: string;
 	histories: Histories;
 	onNavigate: (id: string) => void;
@@ -22,6 +24,7 @@ export interface ChannelSidebarProps {
 }
 
 export default function ChannelSidebar({
+	channels,
 	active,
 	histories,
 	onNavigate,
@@ -84,11 +87,15 @@ export default function ChannelSidebar({
 					<BookOpenIcon size={17} /> Read the blog <ArrowUpRightIcon size={14} />
 				</a>
 				<div className="sidebar-profile">
-					<Avatar small />
-					<span>
-						<strong>{siteConfig.name}</strong>
-						<small>{siteConfig.shortRole}</small>
-					</span>
+					<ProfileDialog>
+						<button className="sidebar-profile-trigger profile-trigger" aria-label="View Olly’s profile">
+							<Avatar small />
+							<span>
+								<strong>{siteConfig.name}</strong>
+								<small>{siteConfig.shortRole}</small>
+							</span>
+						</button>
+					</ProfileDialog>
 					<button
 						className="icon-button theme-button"
 						onClick={onTheme}

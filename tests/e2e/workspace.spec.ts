@@ -51,6 +51,42 @@ test('network failures can be retried without duplicated questions', async ({ pa
 	await expect(page.locator('.visitor-message')).toHaveCount(1);
 });
 
+test('touch prompts work without secure-context UUID support, including after drawer navigation', async ({ browser }) => {
+	const page = await browser.newPage({
+		viewport: { width: 390, height: 844 },
+		isMobile: true,
+		hasTouch: true,
+	});
+	const errors: string[] = [];
+	page.on('pageerror', (error) => errors.push(error.message));
+	try {
+		await page.addInitScript(() => {
+			Object.defineProperty(crypto, 'randomUUID', { value: undefined });
+		});
+		await ready(page);
+		await page.getByRole('button', { name: 'The quick introduction' }).tap();
+		await expect(page.locator('.response-copy')).toContainText('Melbourne');
+		await page.getByRole('button', { name: 'Stop', exact: true }).tap();
+		await page.getByRole('button', { name: 'Retry' }).tap();
+		await expect(page.locator('.response-message')).toHaveAttribute('aria-busy', 'false');
+		await expect(page.locator('.visitor-message')).toHaveCount(1);
+		await page.getByRole('button', { name: 'Open channels' }).tap();
+		const drawer = page.getByRole('dialog');
+		await drawer.getByRole('button', { name: 'Switch to dark theme' }).tap();
+		await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+		await expect(drawer).toBeVisible();
+		await drawer.getByRole('button', { name: 'Switch to light theme' }).tap();
+		await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+		await expect(drawer).toBeVisible();
+		await page.getByRole('dialog').getByRole('link', { name: 'frontend', exact: true }).tap();
+		await page.getByRole('button', { name: 'Building a streaming UI' }).tap();
+		await expect(page.locator('.response-copy')).toContainText('The conversation follows');
+		expect(errors).toEqual([]);
+	} finally {
+		await page.close();
+	}
+});
+
 test('light and dark desktop views have no detected accessibility violations', async ({ page }, testInfo) => {
 	await ready(page);
 	await page.addScriptTag({ content: axe.source });
@@ -103,6 +139,46 @@ test('blog routes and contact deep links remain available', async ({ page }) => 
 	await expect(page.getByRole('heading', { name: 'First Post' })).toBeVisible();
 	await page.goto('/blog/first-post');
 	await expect(page.locator('h1')).toHaveText('First Post');
+});
+
+test('mobile profile links open from both avatars and restore drawer focus', async ({ browser }) => {
+	const page = await browser.newPage({
+		viewport: { width: 390, height: 844 },
+		isMobile: true,
+		hasTouch: true,
+	});
+	try {
+		await ready(page);
+		await page.addScriptTag({ content: axe.source });
+		const profile = page.getByRole('dialog', { name: 'Olly Markey', exact: true });
+		const headerTrigger = page.locator('.channel-header').getByRole('button', { name: 'View Olly’s profile' });
+		await headerTrigger.tap();
+		await expect(profile.getByRole('link', { name: 'GitHub', exact: true })).toHaveAttribute('href', 'https://github.com/ollymarkey');
+		await expect(profile.getByRole('link', { name: 'LinkedIn', exact: true })).toHaveAttribute('href', 'https://www.linkedin.com/in/olivermarkey/');
+		await expect(profile.getByRole('link', { name: 'Email', exact: true })).toHaveAttribute('href', 'mailto:oliver.markey@outlook.com');
+		await profile.getByRole('button', { name: 'Close profile' }).tap();
+		await expect(headerTrigger).toBeFocused();
+		await page.getByRole('button', { name: 'Open channels' }).tap();
+		const drawer = page.getByRole('dialog', { name: 'Workspace channels', exact: true });
+		for (const theme of ['light', 'dark']) {
+			if (theme === 'dark') await drawer.getByRole('button', { name: 'Switch to dark theme' }).tap();
+			await drawer.getByRole('button', { name: 'View Olly’s profile' }).tap();
+			await expect(profile).toBeVisible();
+			await expect(profile.getByRole('link', { name: 'Email', exact: true })).toBeInViewport();
+			const violations = await page.evaluate(async () => (await window.axe.run(document, {
+				runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] },
+			})).violations.map((v) => v.id));
+			expect(violations).toEqual([]);
+			await page.keyboard.press('Escape');
+			await expect(profile).not.toBeVisible();
+			await expect(drawer).toBeVisible();
+			await expect(drawer.getByRole('button', { name: 'View Olly’s profile' })).toBeFocused();
+		}
+		await page.keyboard.press('Escape');
+		await expect(page.getByRole('button', { name: 'Open channels' })).toBeFocused();
+	} finally {
+		await page.close();
+	}
 });
 
 test('channel navigation restores the reader’s scroll position', async ({ page }) => {
