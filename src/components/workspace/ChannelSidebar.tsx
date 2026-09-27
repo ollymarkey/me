@@ -1,6 +1,4 @@
 import {
-	ArrowUpRightIcon,
-	BookOpenIcon,
 	CommandIcon,
 	HashIcon,
 	MoonIcon,
@@ -35,7 +33,11 @@ export default function ChannelSidebar({
 
 	return (
 		<>
-			<a className="workspace-brand" href="#welcome" onClick={() => onNavigate('welcome')}>
+			<a className="workspace-brand" href="/" onClick={(event) => {
+				if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+				event.preventDefault();
+				onNavigate('welcome');
+			}}>
 				<span className="brand-symbol">
 					<CommandIcon size={22} weight="bold" />
 				</span>
@@ -61,10 +63,14 @@ export default function ChannelSidebar({
 								return (
 									<a
 										key={channel.id}
-										href={`#${channel.id}`}
+										href={channel.id === 'welcome' ? '/' : `/${channel.id}`}
 										className={`channel-link${active === channel.id ? ' selected' : ''}`}
 										aria-current={active === channel.id ? 'page' : undefined}
-										onClick={() => onNavigate(channel.id)}
+										onClick={(event) => {
+											if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+											event.preventDefault();
+											onNavigate(channel.id);
+										}}
 									>
 										<HashIcon size={18} />
 										<span>{channel.name}</span>
@@ -83,9 +89,6 @@ export default function ChannelSidebar({
 				))}
 			</nav>
 			<div className="sidebar-bottom">
-				<a className="sidebar-blog" href="/blog">
-					<BookOpenIcon size={17} /> Read the blog <ArrowUpRightIcon size={14} />
-				</a>
 				<div className="sidebar-profile">
 					<ProfileDialog>
 						<button className="sidebar-profile-trigger profile-trigger" aria-label="View Olly’s profile">

@@ -31,7 +31,7 @@ export const POST: APIRoute = async ({ request }) => {
 	const { channelId, promptId, requestId } = input;
 	if (typeof channelId !== 'string' || typeof promptId !== 'string' || typeof requestId !== 'string' || !/^[\w-]{1,80}$/.test(requestId)) return new Response('Invalid identifiers', { status: 400 });
 	const channel = getChannel(channels, channelId);
-	if (!channel?.prompts.some((prompt) => prompt.id === promptId)) return new Response('Unknown prompt', { status: 400 });
+	if (!channel || channel.mode === 'showcase' || !channel.prompts.some((prompt) => prompt.id === promptId)) return new Response('Unknown prompt', { status: 400 });
 	const answer = answers[channelId][promptId];
 	const encoder = new TextEncoder();
 	let position = 0;

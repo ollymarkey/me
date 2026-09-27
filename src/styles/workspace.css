@@ -13,3 +13,5 @@
 @import './workspace/prompts.css';
 @import './workspace/context-panel.css';
 @import './workspace/profile.css';
+@import './workspace/frontend-examples.css';
+@import './workspace/source-dialog.css';

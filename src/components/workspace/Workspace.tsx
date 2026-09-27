@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, type ReactNode } from 'react';
 import type { Channel, Prompt } from '../../data/channels';
 import { useChannelNavigation } from '../../hooks/useChannelNavigation';
 import { useConversationScroll } from '../../hooks/useConversationScroll';
@@ -12,7 +12,13 @@ import MobileChannelDrawer from './MobileChannelDrawer';
 import PromptPicker from './PromptPicker';
 import WorkspaceTopbar from './WorkspaceTopbar';
 
-export default function Workspace({ channels }: { channels: Channel[] }) {
+interface Props {
+	channels: Channel[];
+	initialChannel: string;
+	frontend?: ReactNode; // Supplied as an Astro named slot.
+}
+
+export default function Workspace({ channels, frontend, initialChannel }: Props) {
 	const [announcement, announce] = useState('');
 	const chat = useWorkspaceChat(channels, announce);
 	const { stop } = chat;
@@ -24,7 +30,7 @@ export default function Workspace({ channels }: { channels: Channel[] }) {
 		},
 		[stop],
 	);
-	const { channel, navigate } = useChannelNavigation(channels, onChannelChange);
+	const { channel, navigate } = useChannelNavigation(channels, onChannelChange, initialChannel);
 	const scroll = useConversationScroll(channel.id, chat.histories);
 	const history = chat.histories[channel.id] ?? [];
 	const running = history.some(
@@ -70,25 +76,33 @@ export default function Workspace({ channels }: { channels: Channel[] }) {
 							channel={channel}
 							navigation={<MobileChannelDrawer {...sidebarProps} />}
 						/>
-						<Conversation
-							channel={channel}
-							history={history}
-							scrollRef={scroll.scrollRef}
-							nearBottom={scroll.nearBottom}
-							onScroll={scroll.onScroll}
-							onJumpToLatest={scroll.jumpToLatest}
-							onRetry={handleRetry}
-						/>
-						<PromptPicker
-							channel={channel}
-							history={history}
-							running={running}
-							ready={chat.ready}
-							storageNotice={chat.storageNotice}
-							onAsk={handleAsk}
-							onStop={stop}
-							onReset={() => chat.clear(channel.id)}
-						/>
+						{channel.mode !== 'showcase' && (
+							<>
+								<Conversation
+									channel={channel}
+									history={history}
+									scrollRef={scroll.scrollRef}
+									nearBottom={scroll.nearBottom}
+									onScroll={scroll.onScroll}
+									onJumpToLatest={scroll.jumpToLatest}
+									onRetry={handleRetry}
+								/>
+								<PromptPicker
+									channel={channel}
+									history={history}
+									running={running}
+									ready={chat.ready}
+									storageNotice={chat.storageNotice}
+									onAsk={handleAsk}
+									onStop={stop}
+									onReset={() => chat.clear(channel.id)}
+								/>
+							</>
+						)}
+						{/* Keep Astro-owned islands mounted when navigating between channels. */}
+						<div className="frontend-slot" hidden={channel.mode !== 'showcase'}>
+							{frontend}
+						</div>
 					</main>
 					<ContextPanel channel={channel} />
 				</div>

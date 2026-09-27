@@ -5,7 +5,7 @@
 This is Olly Markey's personal website and blog. The homepage is a Slack-inspired workspace: visitors explore channels, select curated prompts, and receive prepared responses through a real streaming endpoint. It is not a live conversation with Olly or a live model-backed chatbot.
 
 - Astro 5 supplies page rendering and the Markdown blog.
-- A React island supplies the interactive workspace.
+- A React island supplies the interactive workspace. The frontend channel hosts independent React and Svelte example islands plus a plain-HTML example through Astro named slots.
 - Astro's standalone Node adapter serves `POST /api/chat`.
 - Styling is native CSS. There is no Tailwind or shadcn/ui installation.
 - Radix Dialog supplies accessible mobile-drawer behavior. Phosphor supplies icons.
@@ -16,6 +16,7 @@ This is Olly Markey's personal website and blog. The homepage is a Slack-inspire
 
 - `src/pages/`: thin Astro route entry points and API endpoints.
 - `src/components/workspace/`: focused React UI components. `Workspace.tsx` composes components and connects their behavior.
+- `src/components/frontend/`: Astro showcase composition, the example picker, and React/Svelte/HTML demos. Import actual demo source with `?raw` for code disclosures; keep Astro-owned slots mounted across channel changes.
 - `src/hooks/`: focused React/browser behavior such as chat requests, navigation, storage, scrolling, and theme preferences.
 - `src/lib/chat/`: framework-independent state transitions, stream parsing, and shared types. `answers.server.ts` derives public channel metadata and the server-only answer lookup.
 - `src/data/`: profile data and channel types. All channel copy, questions, and responses live in `workspace-content.server.ts`; pass only projected public metadata into React. Shared profile facts belong in `site.ts`; contact destinations belong in `CONSTANTS.ts`.
@@ -52,7 +53,7 @@ The owner likes the current component layout and interaction patterns. For the u
 
 ## Interaction invariants
 
-- Questions come from the channel's prompt list; there is no free-text composer.
+- Questions come from the channel's prompt list; there is no free-text composer. The frontend channel uses `mode: 'showcase'`: its prompts select components rather than call the streaming endpoint. Old frontend chat history is discarded on restore.
 - One response is active across the workspace. Stop and channel changes cancel it.
 - Retry replaces the interrupted answer rather than duplicating the visitor question.
 - Request IDs prevent late stream events from updating another response.

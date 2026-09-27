@@ -2,7 +2,7 @@
 
 ## Page and component tree
 
-`src/pages/index.astro` owns the HTML document, metadata, initial theme selection, font preload, and no-JavaScript fallback. It server-renders and hydrates one React workspace island.
+`src/pages/index.astro` owns the HTML document, metadata, initial theme selection, font preload, and no-JavaScript fallback. It server-renders the React workspace and passes the frontend showcase through an Astro named slot.
 
 ```text
 Workspace
@@ -27,11 +27,27 @@ Workspace
 
 ## Hooks
 
+### Frontend showcase islands
+
+The frontend channel is a component showcase, not a chat channel. `FrontendShowcase.astro` composes an independently hydrated `FrontendChannel.tsx` picker with three named slots:
+
+- `LoadingExperience.tsx`: a React island with a six-second, cancellable loading demo and a meaningful output-format choice. No demo appears or starts hydrating until a visitor selects an example.
+- `ListPlayground.svelte`: a Svelte island with add/remove/shuffle/sort controls, keyed items, FLIP movement, and enter/exit transitions. Respects live reduced-motion preferences and limits the list to six items.
+- `NativeDisclosure.astro`: native `details`/`summary` with CSS-grid opening/closing transitions and a small vanilla script that delays closing until the transition finishes. No framework hydration. Without JavaScript it remains a native accordion; reduced motion disables transitions.
+
+The React and Svelte demos use `client:visible`. `ExampleCard.astro` supplies server-rendered framing and a top-right code icon backed by a separate `CodeDialog.tsx` island. Its Radix modal offers component/CSS views, focus trapping, Escape/close-button dismissal, and focus restoration. Component source and shared CSS are loaded with `?raw`, so the displayed code matches the implementation. The HTML demo itself is still unhydrated; its code viewer is a separate React island.
+
+Workspace owns channel navigation; the picker owns example selection; each demo owns its local state. Astro slots stay mounted and are hidden when inactive, preserving component state and avoiding rehydration when switching channels. There is no cross-framework event bus or global store. Ordinary channels continue using the streaming conversation path.
+
+`mode: 'showcase'` keeps frontend prompts out of the answer lookup and chat endpoint. Storage restoration ignores legacy frontend exchanges.
+
+### Workspace hooks
+
 | Hook | Responsibility |
 | --- | --- |
 | `useWorkspaceChat` | Reducer state, request lifecycle, Stop/Retry, stale-request protection, status callbacks |
 | `useConversationStorage` | Restoring and persisting versioned tab-local history; unavailable-storage fallback |
-| `useChannelNavigation` | Selected channel, hash navigation, browser back/forward, channel-change callback |
+| `useChannelNavigation` | Server-initialized channel, route navigation, legacy hash migration, browser back/forward, channel-change callback |
 | `useConversationScroll` | Channel scroll positions, near-bottom tracking, following new text, jumping to an existing question |
 | `useTheme` | System/manual preference, document theme, local storage |
 
@@ -47,6 +63,8 @@ Framework-independent helpers remain in `src/lib/chat/`: `reducer.ts`, `stream.t
 - `src/CONSTANTS.ts`: contact and social destinations.
 - `src/lib/chat/answers.server.ts`: derives public channel metadata and server-side answer lookup, validating nonempty responses and unique prompt IDs. Full responses never enter hydrated props.
 
+Frontend card headings and descriptions live beside their prompt in an `example` object in `workspace-content.server.ts`. Demo-specific control labels and sample output live with the source component so that the source viewer includes the complete interaction.
+
 ## Styles
 
 `src/styles/workspace.css` imports fonts and the following files in order:
@@ -61,6 +79,8 @@ Framework-independent helpers remain in `src/lib/chat/`: `reducer.ts`, `stream.t
 | `messages.css` | Questions, responses, attachments, and recovery states |
 | `prompts.css` | Prompt picker, Stop/Reset, captions, and jump-to-latest control |
 | `context-panel.css` | Right-hand profile and contact panel |
+| `frontend-examples.css` | Frontend showcase cards, demo controls, code disclosures, and responsive/reduced-motion styles |
+| `source-dialog.css` | Source-code modal and responsive source viewer |
 
 Responsive and motion rules stay beside their owning styles. The existing blog continues to use `src/styles/global.css` through `src/layouts/Layout.astro`.
 

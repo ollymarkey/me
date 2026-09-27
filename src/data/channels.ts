@@ -14,6 +14,7 @@ export interface Channel {
 	intro: string;
 	pinned: string;
 	openingMessage: string;
+	mode?: 'showcase';
 	prompts: Prompt[];
 }
 

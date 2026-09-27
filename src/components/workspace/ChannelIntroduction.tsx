@@ -14,11 +14,11 @@ export default function ChannelIntroduction({ channel }: { channel: Channel }) {
 			<p>{channel.intro}</p>
 			{isWelcome && (
 				<div className="welcome-shortcuts">
-					<a href="#about-me">
+					<a href="/about-me">
 						<span>Meet Olly</span>
 						<ArrowRightIcon size={15} />
 					</a>
-					<a href="#projects">
+					<a href="/projects">
 						<span>Explore the work</span>
 						<ArrowRightIcon size={15} />
 					</a>

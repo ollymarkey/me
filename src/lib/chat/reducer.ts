@@ -42,7 +42,7 @@ export function restoreHistories(raw: string | null, channels: Channel[]): Histo
 		const restored: Histories = {};
 		for (const [channelId, value] of Object.entries(parsed)) {
 			const channel = getChannel(channels, channelId);
-			if (!channel || !Array.isArray(value)) continue;
+			if (!channel || channel.mode === 'showcase' || !Array.isArray(value)) continue;
 			const seen = new Set<string>();
 			restored[channelId] = value.flatMap((item): Exchange[] => {
 				if (!item || typeof item !== 'object' || typeof item.id !== 'string' || typeof item.text !== 'string' || item.text.length > 12_000) return [];

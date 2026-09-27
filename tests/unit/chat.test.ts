@@ -7,24 +7,25 @@ import { POST } from '../../src/pages/api/chat';
 import type { APIContext } from 'astro';
 import { channels } from '../../src/lib/chat/answers.server';
 
-const exchange: Exchange = { id: 'old-request', promptId: 'streaming', question: 'How does this streaming interface work?', text: '', status: 'connecting', links: [] };
-const initial = { frontend: [exchange] };
+const exchange: Exchange = { id: 'old-request', promptId: 'api', question: 'What happens when I select a prompt?', text: '', status: 'connecting', links: [] };
+const initial = { backend: [exchange] };
 const frame = (event: StreamEvent) => `data: ${JSON.stringify(event)}\n\n`;
 
 describe('conversation recovery and isolation', () => {
 	test('late chunks cannot update a stopped response or a replacement request', () => {
-		const stopped = chatReducer(initial, { type: 'interrupt', channelId: 'frontend', requestId: exchange.id });
-		const late = { type: 'event' as const, channelId: 'frontend', event: { type: 'delta' as const, requestId: exchange.id, text: 'late text' } };
-		expect(chatReducer(stopped, late).frontend[0].text).toBe('');
-		const retried = chatReducer(stopped, { type: 'ask', channelId: 'frontend', exchange: { ...exchange, id: 'new-request' } });
-		expect(chatReducer(retried, late).frontend).toHaveLength(1);
-		expect(chatReducer(retried, late).frontend[0].text).toBe('');
-		expect(chatReducer(retried, { ...late, channelId: 'backend' }).frontend).toEqual(retried.frontend);
+		const stopped = chatReducer(initial, { type: 'interrupt', channelId: 'backend', requestId: exchange.id });
+		const late = { type: 'event' as const, channelId: 'backend', event: { type: 'delta' as const, requestId: exchange.id, text: 'late text' } };
+		expect(chatReducer(stopped, late).backend[0].text).toBe('');
+		const retried = chatReducer(stopped, { type: 'ask', channelId: 'backend', exchange: { ...exchange, id: 'new-request' } });
+		expect(chatReducer(retried, late).backend).toHaveLength(1);
+		expect(chatReducer(retried, late).backend[0].text).toBe('');
+		expect(chatReducer(retried, { ...late, channelId: 'welcome' }).backend).toEqual(retried.backend);
 	});
 	test('restoring turns active requests into retryable interruptions and filters unsafe links', () => {
-		const restored = restoreHistories(JSON.stringify({ frontend: [{ ...exchange, text: 'Partial', status: 'streaming', links: [{ label: 'bad', href: 'javascript:alert(1)' }, { label: 'bad', href: '/\\evil.com' }, { label: 'Blog', href: '/blog' }] }], bogus: [exchange] }), channels);
-		expect(restored.frontend[0].status).toBe('interrupted');
-		expect(restored.frontend[0].links).toEqual([{ label: 'Blog', href: '/blog' }]);
+		const restored = restoreHistories(JSON.stringify({ backend: [{ ...exchange, text: 'Partial', status: 'streaming', links: [{ label: 'bad', href: 'javascript:alert(1)' }, { label: 'bad', href: '/\\evil.com' }, { label: 'Blog', href: '/blog' }] }], frontend: [{ ...exchange, promptId: 'streaming' }], bogus: [exchange] }), channels);
+		expect(restored.backend[0].status).toBe('interrupted');
+		expect(restored.backend[0].links).toEqual([{ label: 'Blog', href: '/blog' }]);
+		expect(restored.frontend).toBeUndefined();
 		expect(restored.bogus).toBeUndefined();
 		expect(restoreHistories('not json', channels)).toEqual({});
 	});
@@ -54,19 +55,24 @@ const handle = async (req: Request) => await POST({ request: req } as APIContext
 describe('chat endpoint contract', () => {
 	test('rejects unknown prompt/channel pairs, oversized bodies, and foreign origins', async () => {
 		expect((await handle(request({ channelId: 'frontend', promptId: 'hello', requestId: 'a' }))).status).toBe(400);
+		expect((await handle(request({ channelId: 'frontend', promptId: 'streaming', requestId: 'a' }))).status).toBe(400);
 		expect((await handle(request({ padding: 'a'.repeat(2000) }))).status).toBe(413);
 		expect((await handle(request({}, { Origin: 'https://elsewhere.example' }))).status).toBe(403);
 		expect((await handle(request(null))).status).toBe(400);
 	});
 	test('delivers multiple chunks, then approved attachment links', async () => {
-		const response = await handle(request({ channelId: 'contact', promptId: 'reach', requestId: 'real-stream' }));
+		const response = await handle(request({ channelId: 'contact', promptId: 'links', requestId: 'real-stream' }));
 		const received: StreamEvent[] = [];
 		await consumeStream(response, 'real-stream', (event) => received.push(event));
 		expect(received.filter((event) => event.type === 'delta').length).toBeGreaterThan(2);
-		expect(received.at(-1)).toMatchObject({ type: 'complete', links: [{ label: 'Get in touch', href: 'mailto:oliver.markey@outlook.com' }] });
+		expect(received.at(-1)).toMatchObject({ type: 'complete', links: [
+			{ label: 'Explore my GitHub' },
+			{ label: 'Find me on LinkedIn' },
+			{ label: 'Get in touch', href: 'mailto:oliver.markey@outlook.com' },
+		] });
 	});
 	test('a reader can cancel an active response', async () => {
-		const response = await handle(request({ channelId: 'frontend', promptId: 'streaming', requestId: 'cancel' }));
+		const response = await handle(request({ channelId: 'backend', promptId: 'api', requestId: 'cancel' }));
 		const reader = response.body!.getReader();
 		await reader.read();
 		await reader.cancel();

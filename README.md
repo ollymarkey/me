@@ -36,6 +36,7 @@ docs/                    Design and implementation plans
 public/                  Favicons and other static assets
 src/
   components/            Shared blog components and interactive workspace
+  components/frontend/   Astro-composed React, Svelte, and plain-HTML examples
   content/blog/          Markdown blog posts
   data/site.ts           Profile and blog metadata configuration
   data/channels.ts       Browser-safe channel types and lookup
@@ -62,6 +63,7 @@ astro.config.mjs         Astro configuration
 - Edit `src/data/workspace-content.server.ts` for all channel copy: introductions, opening messages, pinned notes, questions, responses, and response links. Each prompt contains its own `response` object.
 - The content stays server-only. `src/lib/chat/answers.server.ts` derives public channel metadata for React and the answer lookup for the endpoint; full answers are excluded from page props and the client bundle.
 - Keep channel keys and prompt IDs stable. Duplicate prompt IDs and empty answers fail validation during build/server startup. See `docs/channel-content-guide.md` for editing examples.
+- The frontend channel is a component showcase: edit its `example` metadata in the content file and the demos in `src/components/frontend/`. React and Svelte hydrate independently through Astro islands after selection. The HTML example uses native disclosures with CSS transitions and a small vanilla script; each card has a separate React code-viewer modal.
 - Edit `src/data/site.ts` for shared profile data and blog metadata. The workspace's profile panel lives in `src/components/workspace/ContextPanel.tsx`.
 - Edit `src/CONSTANTS.ts` for email, GitHub, and LinkedIn links.
 - Add Markdown files to `src/content/blog/` for new posts. The current `first-post.md` is placeholder content.
@@ -97,7 +99,7 @@ The generated server is `dist/server/entry.mjs`; static assets are in `dist/clie
 
 ## Workspace behavior
 
-- Eight channels with three prompts each. Channel URLs use hashes, such as `/#frontend` and `/#contact`.
+- Eight channels with three prompts each. Channels have prerendered routes such as `/frontend` and `/contact`, with `/` as the welcome page. In-app navigation preserves island state; legacy hash links resolve to their corresponding routes.
 - One response at a time. Stop or switching channels cancels the active response; Retry replaces the partial answer.
 - Independent channel histories saved in versioned `sessionStorage`. They stay in the current browser tab and are not shared with other visitors.
 - System-aware light/dark mode with a manual theme control, a mobile channel drawer, keyboard focus support, and reduced-motion behavior.

@@ -1,0 +1,23 @@
+---
+import CodeDialog from './CodeDialog';
+
+interface Props {
+	framework: string;
+	title: string;
+	description: string;
+	filename: string;
+	source: string;
+	styles: string;
+}
+const { framework, title, description, filename, source, styles } = Astro.props;
+---
+
+<article class="example-card">
+	<CodeDialog framework={framework} filename={filename} source={source} styles={styles} client:visible />
+	<header class="example-card-heading">
+		<span class="example-badge">{framework}</span>
+		<h3>{title}</h3>
+		<p>{description}</p>
+	</header>
+	<div class="example-preview"><slot /></div>
+</article>

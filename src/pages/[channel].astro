@@ -1,0 +1,10 @@
+---
+import WorkspacePage from '../components/workspace/WorkspacePage.astro';
+import { channels } from '../lib/chat/answers.server';
+
+export function getStaticPaths() {
+	return channels.map(({ id }) => ({ params: { channel: id } }));
+}
+const { channel } = Astro.params;
+---
+<WorkspacePage initialChannel={channel} />

@@ -35,6 +35,14 @@ Your second paragraph.`,
 
 `src/lib/chat/answers.server.ts` derives the server lookup and a public channel list. Astro passes only that public list to React; prepared answers are excluded from page props and browser JavaScript. Shared profile facts remain in `src/data/site.ts`.
 
+### Frontend component examples
+
+The frontend channel has `mode: 'showcase'`. Its three prompts have `example` metadata (framework, heading, and description) instead of a streamed `response`. Edit that copy here in the same content file.
+
+The actual demos live in `src/components/frontend/`: `LoadingExperience.tsx` (React), `ListPlayground.svelte` (Svelte), and `NativeDisclosure.astro` (plain HTML). Edit their control labels and demonstration output in those files. Each card’s top-right code icon opens a modal showing the real file, so it stays up to date automatically. Examples are hidden until selected. To replace or add a demo, update the slots in `FrontendShowcase.astro` and the picker mapping in `FrontendChannel.tsx` together.
+
+The Writing channel is temporarily hidden with `hidden: true`. Hidden channels are excluded from workspace navigation, generated channel routes, and the answer lookup. Remove that flag when ready to restore it. The standalone blog pages and posts are retained, but the workspace has no blog links.
+
 ## About me
 
 Questions for Olly:

@@ -13,22 +13,22 @@ async function ready(page: Page, hash = '') {
 test('streaming, cancellation, retry, channel isolation, and refresh recovery', async ({ page }) => {
 	const errors: string[] = [];
 	page.on('pageerror', (error) => errors.push(error.message));
-	await ready(page, '#frontend');
-	await page.getByRole('button', { name: 'Building a streaming UI' }).click();
-	await expect(page.locator('.response-copy')).toContainText('Selecting');
+	await ready(page, '#welcome');
+	await page.getByRole('button', { name: 'The quick introduction' }).click();
+	await expect(page.locator('.response-copy')).toContainText('Olly');
 	await page.getByRole('button', { name: 'Stop', exact: true }).click();
 	await expect(page.getByRole('button', { name: 'Retry' })).toBeVisible();
 	await page.getByRole('button', { name: 'Retry' }).click();
 	await expect(page.locator('.response-message')).toHaveAttribute('aria-busy', 'false');
-	await expect(page.locator('.response-copy')).toContainText('The conversation follows');
+	await expect(page.locator('.response-copy')).toContainText('Melbourne');
 	await expect(page.locator('.visitor-message')).toHaveCount(1);
 	await page.locator('.workspace-sidebar').getByRole('link', { name: 'backend', exact: true }).click();
 	await expect(page.locator('.visitor-message')).toHaveCount(0);
 	await page.getByRole('button', { name: 'Inside the endpoint' }).click();
 	await expect(page.getByRole('button', { name: 'Stop', exact: true })).toBeVisible();
-	await page.locator('.workspace-sidebar').getByRole('link', { name: /^frontend/ }).click();
+	await page.locator('.workspace-sidebar').getByRole('link', { name: /^welcome/ }).click();
 	await expect(page.locator('.visitor-message')).toHaveCount(1);
-	await expect(page.locator('.response-copy')).toContainText('Selecting a prompt');
+	await expect(page.locator('.response-copy')).toContainText('Melbourne');
 	await page.goBack();
 	await expect(page.locator('h1')).toHaveText('backend');
 	await expect(page.getByRole('button', { name: 'Retry' })).toBeVisible();
@@ -78,9 +78,9 @@ test('touch prompts work without secure-context UUID support, including after dr
 		await drawer.getByRole('button', { name: 'Switch to light theme' }).tap();
 		await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
 		await expect(drawer).toBeVisible();
-		await page.getByRole('dialog').getByRole('link', { name: 'frontend', exact: true }).tap();
-		await page.getByRole('button', { name: 'Building a streaming UI' }).tap();
-		await expect(page.locator('.response-copy')).toContainText('The conversation follows');
+		await page.getByRole('dialog').getByRole('link', { name: 'backend', exact: true }).tap();
+		await page.getByRole('button', { name: 'Inside the endpoint' }).tap();
+		await expect(page.locator('.response-copy')).toContainText('The request contains identifiers');
 		expect(errors).toEqual([]);
 	} finally {
 		await page.close();
@@ -108,13 +108,13 @@ test('mobile drawer, keyboard focus, reduced motion, and narrow layouts', async 
 	await page.keyboard.press('Escape');
 	await expect(page.getByRole('button', { name: 'Open channels' })).toBeFocused();
 	await page.getByRole('button', { name: 'Open channels' }).click();
-	await page.getByRole('dialog').getByRole('link', { name: 'frontend', exact: true }).click();
+	await page.getByRole('dialog').getByRole('link', { name: 'backend', exact: true }).click();
 	await expect(page.getByRole('dialog')).not.toBeVisible();
-	await expect(page.locator('h1')).toHaveText('frontend');
+	await expect(page.locator('h1')).toHaveText('backend');
 	await expect(page.getByRole('button', { name: 'Open channels' })).toBeFocused();
-	await page.getByRole('button', { name: 'Building a streaming UI' }).click();
+	await page.getByRole('button', { name: 'Inside the endpoint' }).click();
 	await expect(page.locator('.response-message')).toHaveAttribute('aria-busy', 'false');
-	await expect(page.locator('.response-copy')).toContainText('The conversation follows');
+	await expect(page.locator('.response-copy')).toContainText('The request contains identifiers');
 	await page.addScriptTag({ content: axe.source });
 	const results = await page.evaluate(async () => await window.axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } }));
 	expect(results.violations.map((v) => ({ id: v.id, nodes: v.nodes.map((n) => n.target) }))).toEqual([]);
@@ -133,8 +133,10 @@ test('mobile drawer, keyboard focus, reduced motion, and narrow layouts', async 
 test('blog routes and contact deep links remain available', async ({ page }) => {
 	await ready(page, '#contact');
 	await expect(page.locator('h1')).toHaveText('contact');
+	await expect(page.locator('.prompt-options button:visible')).toHaveCount(1);
 	await page.getByRole('button', { name: 'Get in touch', exact: true }).click();
-	await expect(page.locator('.response-links a')).toHaveAttribute('href', 'mailto:oliver.markey@outlook.com');
+	await expect(page.locator('.response-links a')).toHaveCount(3);
+	await expect(page.locator('.response-links').getByRole('link', { name: /Get in touch/ })).toHaveAttribute('href', 'mailto:oliver.markey@outlook.com');
 	await page.goto('/blog');
 	await expect(page.getByRole('heading', { name: 'First Post' })).toBeVisible();
 	await page.goto('/blog/first-post');
@@ -184,15 +186,15 @@ test('mobile profile links open from both avatars and restore drawer focus', asy
 test('channel navigation restores the reader’s scroll position', async ({ page }) => {
 	await page.setViewportSize({ width: 1000, height: 700 });
 	await page.emulateMedia({ reducedMotion: 'reduce' });
-	await ready(page, '#frontend');
-	await page.getByRole('button', { name: 'Building a streaming UI' }).click();
-	await expect(page.locator('.response-copy')).toContainText('The conversation follows');
+	await ready(page, '#backend');
+	await page.getByRole('button', { name: 'Inside the endpoint' }).click();
+	await expect(page.locator('.response-copy')).toContainText('The request contains identifiers');
 	await expect(page.locator('.response-message')).toHaveAttribute('aria-busy', 'false');
-	const pane = page.locator('.conversation-scroll');
+	const pane = page.locator('.conversation-scroll:visible');
 	await pane.evaluate((element) => { element.scrollTop = 100; });
 	await expect(page.getByRole('button', { name: 'Jump to latest' })).toBeVisible();
-	await page.locator('.workspace-sidebar').getByRole('link', { name: 'backend', exact: true }).click();
-	await page.locator('.workspace-sidebar').getByRole('link', { name: /^frontend/ }).click();
+	await page.locator('.workspace-sidebar').getByRole('link', { name: 'welcome', exact: true }).click();
+	await page.locator('.workspace-sidebar').getByRole('link', { name: /^backend/ }).click();
 	await expect.poll(() => pane.evaluate((element) => element.scrollTop)).toBe(100);
 	await page.getByRole('button', { name: 'Jump to latest' }).click();
 	await expect.poll(() => pane.evaluate((element) => element.scrollHeight - element.scrollTop - element.clientHeight)).toBeLessThan(2);

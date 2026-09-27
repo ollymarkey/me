@@ -67,7 +67,7 @@ export default function ContextPanel({ channel }: { channel: Channel }) {
 				<p>
 					This site is a working example.
 					<br />
-					<a href="#projects">
+					<a href="/projects">
 						Explore the build <ArrowRightIcon size={13} />
 					</a>
 				</p>

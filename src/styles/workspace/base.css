@@ -2,7 +2,7 @@
 	font-family: 'Geist', sans-serif;
 	background: var(--ws-bg);
 	color: var(--ws-text);
-	/* Layers: jump 2, drawer overlay 10, drawer 11, profile overlay 13, profile 14, skip 15. */
+	/* Layers: jump 2, drawer overlay 10, drawer 11, modal overlay 13, modal 14, skip 15. */
 }
 
 * {
