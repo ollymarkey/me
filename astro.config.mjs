@@ -6,7 +6,11 @@ import node from '@astrojs/node';
 import vercel from '@astrojs/vercel';
 
 // https://astro.build/config
-const site = process.env.SITE_URL;
+const site = process.env.SITE_URL || 'https://www.ollymarkey.com';
+const deploymentHosts = [
+	process.env.VERCEL_URL,
+	process.env.VERCEL_BRANCH_URL,
+].filter(Boolean);
 
 export default defineConfig({
 	site,
@@ -19,7 +23,10 @@ export default defineConfig({
 		allowedDomains: [
 			{ hostname: 'localhost' },
 			{ hostname: '127.0.0.1' },
-			...(site ? [{ hostname: new URL(site).hostname }] : []),
+			{ hostname: 'ollymarkey.com' },
+			{ hostname: 'www.ollymarkey.com' },
+			{ hostname: new URL(site).hostname },
+			...deploymentHosts.map((hostname) => ({ hostname })),
 		],
 	},
 });

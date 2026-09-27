@@ -93,7 +93,7 @@ The build selects Astro's Vercel adapter when `VERCEL=1` (automatically set by V
 
 1. Use the **Astro** framework preset, repository root as the Root Directory, `bun install --frozen-lockfile` as the Install Command, and `bun run build` as the Build Command.
 2. Leave the Output Directory override disabled so Vercel uses the adapter's Build Output API output. Do not override it to `dist` or `dist/client`.
-3. Set `SITE_URL=https://www.ollymarkey.com` in the production build environment, matching the current redirect from `ollymarkey.com` to `www.ollymarkey.com`.
+3. `SITE_URL` defaults to `https://www.ollymarkey.com`, matching the current redirect from `ollymarkey.com` to `www.ollymarkey.com`. Override it when using a different canonical origin. Both production hostnames are explicitly allowed so proxied browser chat requests retain the correct origin; Vercel deployment and branch URLs are also allowed when supplied by Vercel's build environment.
 4. Deploy the branch configured as Vercel's Production Branch and confirm both domains are assigned to this project.
 5. Verify `/`, `/frontend`, and a prompt response through `POST /api/chat` on the deployed site. Responses should arrive incrementally.
 
