@@ -4,7 +4,7 @@ My personal website and blog, sharing my work, skills, and thinking as an AI-nat
 
 The homepage is a Slack-inspired workspace. Visitors explore channels about my background, skills, projects, and writing, select curated questions, and receive prepared responses streamed from the server. The site also has a Markdown-powered blog.
 
-Built with Astro 5, a React workspace island, TypeScript, native CSS, and Bun. Astro's Node adapter runs the streaming API. Responses are authored content, not live model output or messages sent to me.
+Built with Astro 5, a React workspace island, TypeScript, native CSS, and Bun. Astro's Vercel adapter runs the streaming API in production; local builds use the standalone Node adapter. Responses are authored content, not live model output or messages sent to me.
 
 ## Getting started
 
@@ -87,7 +87,21 @@ The blog schema also supports optional `updatedDate` and `heroImage` fields. Pos
 
 ## Production configuration
 
-The streaming endpoint requires a Node-capable host. A static-only deployment will not serve chat responses.
+### Vercel (ollymarkey.com)
+
+The build selects Astro's Vercel adapter when `VERCEL=1` (automatically set by Vercel). It generates static routes and a serverless streaming API in `.vercel/output/`.
+
+1. Use the **Astro** framework preset, repository root as the Root Directory, `bun install --frozen-lockfile` as the Install Command, and `bun run build` as the Build Command.
+2. Leave the Output Directory override disabled so Vercel uses the adapter's Build Output API output. Do not override it to `dist` or `dist/client`.
+3. Set `SITE_URL=https://www.ollymarkey.com` in the production build environment, matching the current redirect from `ollymarkey.com` to `www.ollymarkey.com`.
+4. Deploy the branch configured as Vercel's Production Branch and confirm both domains are assigned to this project.
+5. Verify `/`, `/frontend`, and a prompt response through `POST /api/chat` on the deployed site. Responses should arrive incrementally.
+
+To verify the Vercel build locally, run `VERCEL=1 SITE_URL=https://www.ollymarkey.com bun run build`. This output is for Vercel, not `bun start`.
+
+### Standalone Node
+
+Without `VERCEL=1`, builds use the standalone Node adapter. The streaming endpoint requires a Node-capable host; a static-only deployment will not serve chat responses.
 
 1. Set `SITE_URL` to the public origin (for example, `https://your-domain.example`) in the build environment. Astro uses it for canonical/social URLs and the allowed production hostname.
 2. Run `bun install` and `bun run build`.
