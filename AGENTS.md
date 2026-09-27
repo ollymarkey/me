@@ -6,7 +6,7 @@ This is Olly Markey's personal website and blog. The homepage is a Slack-inspire
 
 - Astro 5 supplies page rendering and the Markdown blog.
 - A React island supplies the interactive workspace. The frontend channel hosts independent React and Svelte example islands plus a plain-HTML example through Astro named slots.
-- Astro's standalone Node adapter serves `POST /api/chat`.
+- Astro's Vercel adapter serves `POST /api/chat` in Vercel builds (`VERCEL=1`); other builds use the standalone Node adapter.
 - Styling is native CSS. There is no Tailwind or shadcn/ui installation.
 - Radix Dialog supplies accessible mobile-drawer behavior. Phosphor supplies icons.
 - Geist fonts are self-hosted through Fontsource.
