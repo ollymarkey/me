@@ -1,0 +1,46 @@
+---
+import { channels } from '../../lib/chat/answers.server';
+import { channelContent } from '../../data/workspace-content.server';
+import FrontendChannel from './FrontendChannel';
+import ExampleCard from './ExampleCard.astro';
+import LoadingExperience from './LoadingExperience';
+import ListPlayground from './ListPlayground.svelte';
+import NativeDisclosure from './NativeDisclosure.astro';
+import reactSource from './LoadingExperience.tsx?raw';
+import svelteSource from './ListPlayground.svelte?raw';
+import htmlSource from './NativeDisclosure.astro?raw';
+import styles from '../../styles/workspace/frontend-examples.css?raw';
+
+const channel = channels.find((channel) => channel.id === 'frontend')!;
+const exampleCopy = (id: string) => channelContent.frontend.prompts.find((prompt) => prompt.id === id)!.example!;
+---
+
+<FrontendChannel channel={channel} client:visible>
+	<ExampleCard
+		slot="loading"
+		{...exampleCopy('streaming')}
+		filename="LoadingExperience.tsx"
+		source={reactSource}
+		styles={styles}
+	>
+		<LoadingExperience client:visible />
+	</ExampleCard>
+	<ExampleCard
+		slot="reactivity"
+		{...exampleCopy('accessibility')}
+		filename="ListPlayground.svelte"
+		source={svelteSource}
+		styles={styles}
+	>
+		<ListPlayground client:visible />
+	</ExampleCard>
+	<ExampleCard
+		slot="html"
+		{...exampleCopy('state')}
+		filename="NativeDisclosure.astro (plain HTML)"
+		source={htmlSource}
+		styles={styles}
+	>
+		<NativeDisclosure />
+	</ExampleCard>
+</FrontendChannel>

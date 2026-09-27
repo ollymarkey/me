@@ -1,0 +1,51 @@
+<div class="native-disclosure">
+	<p class="native-intro">Some of the best components are already in your browser.</p>
+	<details name="native-example">
+		<summary>What does this need to work?</summary>
+		<div class="disclosure-content"><div><p>Native HTML handles the disclosure. A little CSS and vanilla JavaScript animate the opening and closing, without a JavaScript framework.</p></div></div>
+	</details>
+	<details name="native-example">
+		<summary>Why start with the platform?</summary>
+		<div class="disclosure-content"><div><p>Less code to download, fewer behaviours to rebuild, and useful content available before any JavaScript runs. Add a framework when the interaction actually needs one.</p></div></div>
+	</details>
+	<details name="native-example">
+		<summary>Can I use this with a keyboard?</summary>
+		<div class="disclosure-content"><div><p>Yes. Tab to a question, then press Enter or Space to open it. The browser handles the interaction.</p></div></div>
+	</details>
+	<p class="demo-note">Native disclosure. CSS motion. No framework.</p>
+</div>
+
+<script>
+	document.querySelectorAll<HTMLElement>('.native-disclosure').forEach((accordion) => {
+		const panels = [...accordion.querySelectorAll('details')];
+		const timers = new Map<HTMLDetailsElement, ReturnType<typeof setTimeout>>();
+		const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+
+		function setExpanded(panel: HTMLDetailsElement, expanded: boolean) {
+			clearTimeout(timers.get(panel));
+			const content = panel.querySelector<HTMLElement>('.disclosure-content')!;
+			if (expanded) {
+				panel.open = true;
+				// Establish the collapsed grid before transitioning to its natural height.
+				void content.offsetHeight;
+			}
+			panel.dataset.expanded = String(expanded);
+			if (!expanded) {
+				if (reducedMotion.matches) panel.open = false;
+				else timers.set(panel, setTimeout(() => { panel.open = false; }, 280));
+			}
+		}
+
+		panels.forEach((panel) => {
+			panel.removeAttribute('name');
+			panel.dataset.expanded = String(panel.open);
+			panel.classList.add('animated-disclosure');
+			panel.querySelector('summary')!.addEventListener('click', (event) => {
+				event.preventDefault();
+				const expanded = panel.dataset.expanded !== 'true';
+				if (expanded) panels.filter((other) => other !== panel).forEach((other) => setExpanded(other, false));
+				setExpanded(panel, expanded);
+			});
+		});
+	});
+</script>

@@ -1,5 +1,23 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import react from '@astrojs/react';
+import svelte from '@astrojs/svelte';
+import node from '@astrojs/node';
 
 // https://astro.build/config
-export default defineConfig({});
+const site = process.env.SITE_URL;
+
+export default defineConfig({
+	site,
+	// The floating toolbar overlaps the mobile drawer's theme control.
+	devToolbar: { enabled: false },
+	integrations: [react(), svelte()],
+	adapter: node({ mode: 'standalone' }),
+	security: {
+		allowedDomains: [
+			{ hostname: 'localhost' },
+			{ hostname: '127.0.0.1' },
+			...(site ? [{ hostname: new URL(site).hostname }] : []),
+		],
+	},
+});

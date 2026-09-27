@@ -1,5 +1,5 @@
 const EMAIL = "oliver.markey@outlook.com"
-const LINKEDIN = "https://www.linkedin.com/in/oliver-markey-9a462a247/"
+const LINKEDIN = "https://www.linkedin.com/in/olivermarkey/"
 
 export const APP_CONSTANTS = {
 	email: {
