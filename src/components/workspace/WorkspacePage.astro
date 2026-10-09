@@ -1,5 +1,6 @@
 ---
 import Workspace from './Workspace';
+import Analytics from '../Analytics.astro';
 import FrontendShowcase from '../frontend/FrontendShowcase.astro';
 import { channels } from '../../lib/chat/answers.server';
 import { siteConfig } from '../../data/site';
@@ -33,6 +34,7 @@ const canonicalPath = initialChannel === 'welcome' ? '/' : `/${initialChannel}`;
 		<link rel="icon" href="/favicon.ico" sizes="any" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 		<link rel="manifest" href="/site.webmanifest" />
+		<Analytics />
 		<script is:inline>
 			try {
 				const saved = localStorage.getItem('olly-theme');
